@@ -1,0 +1,75 @@
+# Data — distribueras aldrig i repo
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.virtualenv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+.DS_Store
+*.DS_Store
+
+# Test/coverage
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.tox/
+.hypothesis/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Terms acceptance (local only)
+.sv-rp-terms-accepted
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Package files
+*.tar.gz
+*.zip
+
+# Distribution
+sdist/
+wheels/

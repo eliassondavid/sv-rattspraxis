@@ -1,0 +1,41 @@
+sv-rattspraxis
+Copyright 2026 David Eliasson
+
+This product includes software developed by David Eliasson.
+
+================================================================================
+
+THIRD-PARTY NOTICES:
+
+This software makes use of data from the following sources:
+
+1. Domstolsverkets REST-API (rattspraxis.etjanst.domstol.se)
+   - Public records under Swedish Offentlighetsprincipen
+   - No copyright claim by Domstolsverket
+   - See docs/UPSTREAM_SOURCES.md
+
+2. Juridikbok.se content (future integration)
+   - Monografier och avhandlingar (904 verk)
+   - Non-commercial use only
+   - Attribution to original authors required
+   - Will be documented in docs/JURIDIKBOK_LICENSE.md upon integration
+
+================================================================================
+
+ATTRIBUTION REQUIREMENTS:
+
+When using this software, you must:
+1. Retain this NOTICE file in any distribution
+2. Provide attribution to David Eliasson as the original author
+3. Document any modifications made to the source code
+4. When citing legal documents harvested by this software, attribute:
+   - The original source (Domstolsverket)
+   - This harvesting tool (sv-rattspraxis)
+
+Example citation:
+"Data from Domstolsverkets REST-API, harvested via sv-rattspraxis 
+(https://github.com/eliassondavid/sv-rattspraxis) by David Eliasson."
+
+================================================================================
+
+For full license terms, see the LICENSE file.

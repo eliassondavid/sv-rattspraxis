@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "Om du använder denna programvara, vänligen citera den enligt nedan."
+type: software
+title: "sv-rattspraxis: Harvester & RAG-pipeline för svensk rättspraxis"
+authors:
+  - family-names: "Eliasson"
+    given-names: "David"
+repository-code: "https://github.com/eliassondavid/sv-rattspraxis"
+url: "https://github.com/eliassondavid/sv-rattspraxis"
+abstract: >-
+  En öppen källkods-pipeline för programmatisk inhämtning, strukturering och 
+  RAG-förberedelse av svensk rättspraxis från Domstolsverkets REST-API. 
+  Omfattar 22 domstolar och ~17 000 avgöranden med fulltext, metadata och 
+  anti-hallucination-verifiering.
+keywords:
+  - legal-tech
+  - swedish-law
+  - court-decisions
+  - harvester
+  - rag
+  - rättspraxis
+  - domstol
+license: MIT
+version: 0.1.0
+date-released: "2026-02-19"
