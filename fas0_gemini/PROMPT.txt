@@ -1,0 +1,65 @@
+# FAS 0 — API-KATALOGISERING
+
+Du är expert på API-testning och datainsamling.
+
+## UPPGIFT
+
+Katalogisera Domstolsverkets REST-API för svensk rättspraxis.
+
+**API:** https://rattspraxis.etjanst.domstol.se/api/v1/
+
+## STEG
+
+1. **GET /api/v1/domstolar** → Hämta alla domstolskoder (förväntat: 22)
+
+2. **POST /api/v1/sokforfiningar** → För varje domstol × typ, hämta volymer
+   - Typer: REFERAT, NOTIS, DOM_ELLER_BESLUT, PROVNINGSTILLSTAND, FORHANDSAVGORANDE
+
+3. **POST /api/v1/sok** → För varje domstol, hämta 5 exempelposter
+   - Verifiera: innehall finns, referatNummerLista format, malNummerLista format
+
+4. **Testa paginering** för 5 största domstolarna (HDO, ADO, REGR, HSV, HFD)
+
+## VIKTIGT
+
+- **Rate limiting:** Vänta 1.5 sekunder mellan VARJE API-anrop
+- **User-Agent:** "SVRattspraxisHarvester/1.0 (Fas 0 Cataloging)"
+- Använd strukturen i `api_catalog_template.json`
+
+## REQUEST-EXEMPEL
+
+### Volymer
+```json
+POST /api/v1/sokforfiningar
+{
+  "antalPerSida": 100,
+  "filter": {
+    "avgorandeTypLista": ["REFERAT"],
+    "domstolKodLista": ["HFD"]
+  }
+}
+```
+
+### Exempelposter
+```json
+POST /api/v1/sok
+{
+  "antalPerSida": 5,
+  "sidIndex": 0,
+  "filter": {
+    "avgorandeTypLista": ["REFERAT"],
+    "domstolKodLista": ["HFD"]
+  },
+  "sortorder": "avgorandedatum"
+}
+```
+
+## OUTPUT
+
+Skapa 3 filer:
+
+1. **api_catalog.json** — Komplett data enligt template
+2. **api_behavior_report.md** — Rapport med volymmatris (markdown-tabell)
+3. **edge_cases.md** — Dokumenterade avvikelser
+
+Börja nu! Dokumentera varje steg.

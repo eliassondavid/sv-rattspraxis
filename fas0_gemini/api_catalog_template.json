@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "created_at": "2026-02-20T12:00:00Z",
+    "api_base_url": "https://rattspraxis.etjanst.domstol.se/api/v1/",
+    "total_domstolar": 22,
+    "fas": 0
+  },
+  "domstolar": [
+    {
+      "domstol_kod": "HFD",
+      "domstol_benamning": "Högsta förvaltningsdomstolen",
+      "volymer": {
+        "REFERAT": 1342,
+        "NOTIS": 47,
+        "DOM_ELLER_BESLUT": 134,
+        "PROVNINGSTILLSTAND": 42,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "HFD YYYY ref. N",
+        "malnummer_format": "NNNN-NN",
+        "har_litteratur": true,
+        "har_bilagor": true,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": ["HFD 2023 ref. 1"],
+        "malnummer": ["4033-09"]
+      },
+      "avvikelser": []
+    }
+  ],
+  "edge_cases": []
+}
