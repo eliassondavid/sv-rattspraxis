@@ -1,0 +1,58 @@
+# FAS 1 — GENERALISERA HARVESTER
+
+Du är expert på Python-refactoring och kodgeneralisering.
+
+## UPPGIFT
+
+Generalisera befintlig HFD-harvester till att fungera för alla 22 svenska domstolar.
+
+## INPUT-FILER
+
+1. **api_catalog.json** — Volymer och fältstruktur per domstol
+2. **harvester.py** — Befintlig HFD-specifik harvester
+3. **naming.py** — Filnamnskonvention (HFD-prefix)
+4. **cli.py** — CLI med hårdkodad HFD
+5. **models.py** — Pydantic-modeller (ingen ändring)
+
+## STEG
+
+### 1. Analysera api_catalog.json
+Extrahera nyckeldata för varje domstol:
+- Domstolskod
+- Namn
+- Volymer per typ
+- Referatnummerformat
+- Målnummerformat
+
+### 2. Skapa courts.py
+Se FAS_1_INSTRUKTIONER.md för struktur.
+
+### 3. Refactorera harvester.py
+- Byt `HFDHarvester` → `DomstolHarvester`
+- Parametrisera domstolskod
+- Använd `COURTS` för konfiguration
+- Behåll all logik (paginering, rate limiting, SHA-256)
+
+### 4. Uppdatera naming.py
+Generalisera från `HFD_` till `{DOMSTOL}_` prefix.
+
+### 5. Uppdatera cli.py
+Lägg till `--court` parameter med default "HFD".
+
+## TESTNING
+
+Kör efter refactoring:
+```bash
+python -m pytest tests/ -v
+```
+
+## OUTPUT
+
+Leverera 5 uppdaterade filer:
+1. courts.py (ny)
+2. harvester.py (refactored)
+3. naming.py (refactored)
+4. cli.py (uppdaterad)
+5. README_FAS1.md (dokumentation)
+
+Börja med att läsa alla input-filer noggrant!

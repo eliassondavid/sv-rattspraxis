@@ -1,29 +1,4 @@
-# Copyright 2026 David Eliasson
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-
-"""
-Filnamnskonvention för HFD-referat.
-
-Implementerar LÅST konvention från projektspecifikationen:
-HFD_{YEAR}_ref-{NNN}__mal-{MALNR}.json
-
-Hanterar:
-- Målnummer i olika format (se HFD-mal_nr.md)
-- Interval-målnummer (normalisering till första numret)
-- Flera enskilda målnummer (använd det först listade)
-"""
+"""Filnamnskonvention och parserhjälpare för domstolsdata."""
 
 import re
 
@@ -33,264 +8,148 @@ logger = structlog.get_logger()
 
 
 class MalnummerParser:
-    """
-    Parsar och normaliserar HFD-målnummer.
+    """Parser för målnummer med stöd för flera domstolsformat."""
 
-    Hanterar alla varianter enligt HFD-mal_nr.md:
-    - Grundformat: 1536-23
-    - Listor: 6963-15, 6969-15
-    - Intervall: 6107–6109-23, 6159--6160-14
-    - Kombinationer: 6578-14, 6159--6160-14
-    """
+    SINGLE_PATTERNS = (
+        # T.ex. 4033-09
+        re.compile(r"(?<!\d)(\d{1,6}-\d{2})(?!\d)"),
+        # T.ex. M 4256-10, UM 12369-24, PMT 10755-25
+        re.compile(r"\b([A-ZÅÄÖ]{1,4}\s*\d{1,6}-\d{2})\b", re.IGNORECASE),
+        # T.ex. A 153/24
+        re.compile(r"\b([A-ZÅÄÖ]{1,4}\s*\d{1,6}/\d{2})\b", re.IGNORECASE),
+        # T.ex. 2016-9
+        re.compile(r"\b(\d{4}-\d{1,3})\b"),
+    )
 
-    # Regex för enskilt målnummer: NNNN-NN
-    SINGLE_PATTERN = re.compile(r"(?<!\d)(\d{1,5}-\d{2})(?!\d)")
-
-    # Regex för intervall: NNNN[-–--]NNNN-NN
-    RANGE_PATTERN = re.compile(r"(?<!\d)(\d{1,5})(?:--|–|-)(\d{1,5})-(\d{2})(?!\d)")
+    RANGE_PATTERN = re.compile(r"(?<!\d)(\d{1,6})(?:--|–|-)(\d{1,6})-(\d{2})(?!\d)")
 
     @classmethod
     def normalize_interval_chars(cls, text: str) -> str:
-        """
-        Normaliserar intervalltecken till dubbelt bindestreck (--).
-
-        Args:
-            text: Råtext med målnummer
-
-        Returns:
-            Text där – (en-dash) ersatts med --
-        """
-        # En-dash → dubbelt bindestreck
+        """Normaliserar olika intervalltecken."""
         return text.replace("–", "--")
 
     @classmethod
     def split_list(cls, text: str) -> list[str]:
-        """
-        Delar upp lista av målnummer.
-
-        Splittar på:
-        - Komma
-        - " och "
-        - " samt "
-
-        Args:
-            text: Råtext med målnummer
-
-        Returns:
-            Lista av tokens
-        """
-        # Ta bort prefix som "Mål:", "mål nr", "Mål nr."
+        """Delar upp lista av målnummer på vanligt förekommande avgränsare."""
         text = re.sub(r"(Mål|mål)\s*(nr\.?|:)\s*", "", text, flags=re.IGNORECASE)
-
-        # Splitta på komma och konjunktioner
         text = text.replace(" och ", ",").replace(" samt ", ",")
-        tokens = [t.strip() for t in text.split(",") if t.strip()]
-
-        return tokens
+        return [token.strip() for token in text.split(",") if token.strip()]
 
     @classmethod
     def parse_single(cls, token: str) -> str | None:
-        """
-        Parsar enskilt målnummer.
+        """Parsning av ett enskilt målnummer-token."""
+        for pattern in cls.SINGLE_PATTERNS:
+            match = pattern.search(token)
+            if match:
+                return re.sub(r"\s+", " ", match.group(1)).strip()
 
-        Args:
-            token: Token som kan vara ett målnummer
-
-        Returns:
-            Målnummer om matchning, annars None
-        """
-        match = cls.SINGLE_PATTERN.search(token)
-        return match.group(1) if match else None
-
-    @classmethod
-    def parse_range(cls, token: str) -> tuple[int, int, str] | None:
-        """
-        Parsar intervall-målnummer.
-
-        Args:
-            token: Token som kan vara ett intervall
-
-        Returns:
-            (start, slut, år) om matchning, annars None
-
-        Example:
-            >>> MalnummerParser.parse_range("6107--6109-23")
-            (6107, 6109, "23")
-        """
-        match = cls.RANGE_PATTERN.search(token)
-        if match:
-            start = int(match.group(1))
-            end = int(match.group(2))
-            year = match.group(3)
-            return (start, end, year)
+        # Sista fallback: behåll token om den innehåller siffror.
+        token_norm = re.sub(r"\s+", " ", token).strip()
+        if any(char.isdigit() for char in token_norm):
+            return token_norm
         return None
 
     @classmethod
+    def parse_range(cls, token: str) -> tuple[int, int, str] | None:
+        """Parsning av intervall i formen start-slut-år."""
+        match = cls.RANGE_PATTERN.search(token)
+        if not match:
+            return None
+        return int(match.group(1)), int(match.group(2)), match.group(3)
+
+    @classmethod
     def expand_range(cls, start: int, end: int, year: str) -> list[str]:
-        """
-        Expanderar intervall till lista av målnummer.
-
-        Args:
-            start: Startnummer
-            end: Slutnummer
-            year: Årssuffix (2 siffror)
-
-        Returns:
-            Lista av målnummer
-
-        Example:
-            >>> MalnummerParser.expand_range(6107, 6109, "23")
-            ["6107-23", "6108-23", "6109-23"]
-        """
-        return [f"{n}-{year}" for n in range(start, end + 1)]
+        """Expanderar intervall till en lista av målnummer."""
+        if end < start:
+            start, end = end, start
+        return [f"{number}-{year}" for number in range(start, end + 1)]
 
     @classmethod
     def parse_malnummer_lista(cls, raw_lista: list[str]) -> tuple[list[str], str]:
-        """
-        Parsar lista av målnummer från API.
-
-        Args:
-            raw_lista: Rådata från API (malNummerLista)
-
-        Returns:
-            (alla_malnummer, primart_malnummer)
-            - alla_malnummer: Lista av alla målnummer (intervall expanderade)
-            - primart_malnummer: Första målnumret (för filnamn)
-
-        Example:
-            >>> MalnummerParser.parse_malnummer_lista(["6107–6109-23", "7000-23"])
-            (["6107-23", "6108-23", "6109-23", "7000-23"], "6107-23")
-        """
+        """Parser för `malNummerLista` från API."""
         if not raw_lista:
-            logger.warning("parse_malnummer_lista: tom lista")
+            logger.warning("parse_malnummer_lista_empty")
             return ([], "UNKNOWN")
 
-        alla_malnummer = []
-        original_form = raw_lista[0]  # För loggning
+        all_malnummer: list[str] = []
 
         for raw in raw_lista:
-            # Normalisera intervalltecken
             normalized = cls.normalize_interval_chars(raw)
-
-            # Splitta lista (om flera målnummer i samma sträng)
             tokens = cls.split_list(normalized)
 
             for token in tokens:
-                # Testa intervall först
                 range_match = cls.parse_range(token)
                 if range_match:
                     start, end, year = range_match
-                    expanded = cls.expand_range(start, end, year)
-                    alla_malnummer.extend(expanded)
-                    logger.debug(
-                        "parse_malnummer_range",
-                        original=raw,
-                        token=token,
-                        expanded=expanded,
-                    )
+                    all_malnummer.extend(cls.expand_range(start, end, year))
                     continue
 
-                # Testa enskilt målnummer
-                single_match = cls.parse_single(token)
-                if single_match:
-                    alla_malnummer.append(single_match)
-                    logger.debug(
-                        "parse_malnummer_single",
-                        original=raw,
-                        token=token,
-                        parsed=single_match,
-                    )
-                    continue
+                single = cls.parse_single(token)
+                if single:
+                    all_malnummer.append(single)
+                else:
+                    logger.warning("parse_malnummer_failed", token=token, original=raw)
 
-                # Kunde inte parsa
-                logger.warning("parse_malnummer_failed", token=token, original=raw)
+        primary = all_malnummer[0] if all_malnummer else "UNKNOWN"
+        return (all_malnummer, primary)
 
-        # Primärt målnummer = första i listan
-        primart = alla_malnummer[0] if alla_malnummer else "UNKNOWN"
 
-        if primart == "UNKNOWN":
-            logger.error(
-                "parse_malnummer_no_valid",
-                raw_lista=raw_lista,
-                original_form=original_form,
-            )
-
-        return (alla_malnummer, primart)
+def sanitize_malnummer_for_filename(malnummer: str) -> str:
+    """Normaliserar målnummer till filnamnssäker komponent."""
+    value = malnummer.strip()
+    value = value.replace("/", "-")
+    value = re.sub(r"\s+", "", value)
+    value = value.replace("–", "-")
+    value = re.sub(r"[^0-9A-Za-zÅÄÖåäö-]", "", value)
+    return value or "UNKNOWN"
 
 
 def generate_filename(
+    domstol: str,
     year: int,
     ref_no: int,
     malnummer_primart: str,
     extension: str = "json",
 ) -> str:
-    """
-    Genererar filnamn enligt LÅST konvention.
+    """Genererar filnamn i formatet `{DOMSTOL}_{YEAR}_ref-{NNN}__mal-{MALNR}.{ext}`."""
+    court = domstol.upper().strip()
+    if not court:
+        raise ValueError("domstol får inte vara tom")
 
-    Format: HFD_{YEAR}_ref-{NNN}__mal-{MALNR}.{ext}
-
-    Args:
-        year: 4-siffrigt år (2011-2025)
-        ref_no: Referatnummer (1-999)
-        malnummer_primart: Första målnumret (t.ex. "4033-09")
-        extension: Filändelse ("json" eller "pdf")
-
-    Returns:
-        Filnamn-sträng
-
-    Example:
-        >>> generate_filename(2011, 1, "4033-09", "json")
-        "HFD_2011_ref-001__mal-4033-09.json"
-    """
     ref_no_padded = f"{ref_no:03d}"
-    return f"HFD_{year}_ref-{ref_no_padded}__mal-{malnummer_primart}.{extension}"
+    malnr_component = sanitize_malnummer_for_filename(malnummer_primart)
+    return f"{court}_{year}_ref-{ref_no_padded}__mal-{malnr_component}.{extension}"
 
 
 def parse_referat_nummer(referat_nummer: str) -> tuple[int, int]:
-    """
-    Parsar referatnummer till år och löpnummer.
+    """Parsning av referatnummer till `(year, ref_no)` för flera format."""
+    patterns = (
+        # HFD/RÅ
+        re.compile(r"(?:HFD|RÅ)\s+(\d{4})\s+ref\.\s*(\d+)", re.IGNORECASE),
+        # AD
+        re.compile(r"[A-ZÅÄÖ]{1,4}\s+(\d{4})\s+nr\s+(\d+)", re.IGNORECASE),
+        # RH, RK, MIG, MD, MÖD
+        re.compile(r"[A-ZÅÄÖ]{1,4}\s+(\d{4})\s*:\s*(\d+)", re.IGNORECASE),
+        # NJA-format
+        re.compile(r"[A-ZÅÄÖ]{1,4}\s+(\d{4})\s+s\.\s*(\d+)", re.IGNORECASE),
+    )
 
-    Args:
-        referat_nummer: T.ex. "HFD 2011 ref. 1"
+    for pattern in patterns:
+        match = pattern.search(referat_nummer)
+        if match:
+            return int(match.group(1)), int(match.group(2))
 
-    Returns:
-        (year, ref_no)
+    # Fallback: första årtal + första efterföljande tal.
+    fallback = re.search(r"(\d{4}).*?(\d{1,4})", referat_nummer)
+    if fallback:
+        year = int(fallback.group(1))
+        ref_no = int(fallback.group(2))
+        return year, ref_no
 
-    Raises:
-        ValueError: Om formatet inte matchar
-
-    Example:
-        >>> parse_referat_nummer("HFD 2011 ref. 1")
-        (2011, 1)
-    """
-    # Regex: "HFD YYYY ref. N" eller "RÅ YYYY ref. N"
-    pattern = r"(HFD|RÅ)\s+(\d{4})\s+ref\.\s+(\d+)"
-    match = re.search(pattern, referat_nummer)
-
-    if not match:
-        raise ValueError(f"Kunde inte parsa referatnummer: {referat_nummer}")
-
-    year = int(match.group(2))
-    ref_no = int(match.group(3))
-
-    return (year, ref_no)
+    raise ValueError(f"Kunde inte parsa referatnummer: {referat_nummer}")
 
 
 def validate_filename(filename: str) -> bool:
-    """
-    Validerar att filnamn följer konventionen.
-
-    Args:
-        filename: Filnamn att validera
-
-    Returns:
-        True om giltigt, annars False
-
-    Example:
-        >>> validate_filename("HFD_2011_ref-001__mal-4033-09.json")
-        True
-        >>> validate_filename("invalid.json")
-        False
-    """
-    pattern = r"^HFD_\d{4}_ref-\d{3}__mal-\d{1,5}-\d{2}\.(json|pdf)$"
+    """Validerar filnamn enligt den generaliserade konventionen."""
+    pattern = r"^[A-Z]{2,5}_\d{4}_ref-\d{3}__mal-[0-9A-Za-zÅÄÖåäö-]+\.(json|pdf)$"
     return bool(re.match(pattern, filename))
