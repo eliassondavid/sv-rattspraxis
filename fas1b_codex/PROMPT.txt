@@ -1,0 +1,169 @@
+# FAS 1B — ROBUST MÅLNUMMERPARSNING
+
+Du är expert på regex och parsning av strukturerad text.
+
+## UPPGIFT
+
+Förbättra `MalnummerParser` i naming.py för att hantera alla svenska domstolars 
+målnummerformat robust och korrekt.
+
+## INPUT-FILER
+
+1. **HFD-mal_nr.md** — Alla HFD-varianter dokumenterade
+2. **naming.py** — Befintlig implementation
+3. **api_catalog.json** — Edge cases från alla 22 domstolar
+4. **courts.py** — Målnummerformat per domstol
+
+## ANALYS
+
+### Från HFD-mal_nr.md:
+1. Single: `4033-09`
+2. Lista komma: `6963-15, 6969-15`
+3. Lista "och": `6980-24 och 6981-24`
+4. Lista "samt": `A samt B`
+5. Intervall en-dash: `6107–6109-23`
+6. Intervall dubbel-dash: `6159--6160-14`
+7. Intervall enkelt: `4569-4571-22`
+8. Kombinationer: `6578-14, 6159--6160-14`, `7550–7558-21 samt 664–669-22`
+
+### Från courts.py:
+- HD: `X NNNN-NN` (T, B, Ö, P som prefix)
+- AD: `A NNN/NN` (slash istället för dash)
+- MÖD: `M NNNN-NN`
+- MMOD: `M NNNNN-NN`, `UM NNNNN-NN` (längre prefix)
+- MDO: `YYYY-N` (år-nummer utan 2-siffrig årssuffix)
+
+## STEG
+
+### 1. Förbättra regex-patterns
+
+**SINGLE_PATTERNS:**
+- Behåll nuvarande patterns
+- Lägg till stöd för längre prefix (UM, PMT, etc.)
+
+**RANGE_PATTERN:**
+- Behåll nuvarande
+- Verifiera att alla tre intervalltecken (–, --, -) fungerar
+
+### 2. Förbättra parse_single()
+
+- Behåll prefix där det finns (T 1234-22)
+- Normalisera whitespace (T  1234-22 → T 1234-22)
+- Returnera None om inget match
+
+### 3. Förbättra parse_range()
+
+- Hantera alla intervalltecken
+- Returnera (start, end, year)
+
+### 4. Förbättra expand_range()
+
+- Verifiera att start ≤ end (swappa annars)
+- Returnera expanderad lista
+
+### 5. Skapa test_malnummer.py
+
+**Testfall (minst 30):**
+```python
+class TestMalnummerParserHFD:
+    """HFD-specifika tester från HFD-mal_nr.md"""
+    
+    def test_single_basic(self):
+        assert parse("4033-09") == ["4033-09"]
+    
+    def test_lista_komma(self):
+        assert parse("6963-15, 6969-15") == ["6963-15", "6969-15"]
+    
+    def test_lista_och(self):
+        assert parse("6980-24 och 6981-24") == ["6980-24", "6981-24"]
+    
+    def test_lista_samt(self):
+        assert parse("A samt B") == ["A", "B"]
+    
+    def test_intervall_endash(self):
+        assert parse("6107–6109-23") == ["6107-23", "6108-23", "6109-23"]
+    
+    def test_intervall_doubledash(self):
+        assert parse("6159--6160-14") == ["6159-14", "6160-14"]
+    
+    def test_intervall_singledash(self):
+        # Svårt att skilja från single - kräver kontext
+        pass
+    
+    def test_kombination_1(self):
+        result = parse("6578-14, 6159--6160-14")
+        assert "6578-14" in result
+        assert "6159-14" in result
+        assert "6160-14" in result
+    
+    def test_kombination_2(self):
+        result = parse("7550–7558-21 samt 664–669-22")
+        assert "7550-21" in result
+        assert "7558-21" in result
+        assert "664-22" in result
+        assert "669-22" in result
+
+class TestMalnummerParserHD:
+    """HD-specifika tester"""
+    
+    def test_t_prefix(self):
+        assert parse("T 1234-22") == ["T 1234-22"]
+    
+    def test_b_prefix(self):
+        assert parse("B 5678-21") == ["B 5678-21"]
+    
+    def test_o_prefix(self):
+        assert parse("Ö 9012-23") == ["Ö 9012-23"]
+
+class TestMalnummerParserAD:
+    """AD-specifika tester"""
+    
+    def test_a_slash(self):
+        assert parse("A 153/24") == ["A 153/24"]
+
+class TestMalnummerParserMOD:
+    """MÖD/MMOD-specifika tester"""
+    
+    def test_m_prefix(self):
+        assert parse("M 4256-10") == ["M 4256-10"]
+    
+    def test_um_prefix(self):
+        assert parse("UM 12369-24") == ["UM 12369-24"]
+
+class TestMalnummerParserMDO:
+    """MDO-specifika tester"""
+    
+    def test_year_format(self):
+        assert parse("2016-9") == ["2016-9"]
+
+class TestMalnummerParserEdgeCases:
+    """Edge cases"""
+    
+    def test_empty_list(self):
+        all_mal, primary = parse_malnummer_lista([])
+        assert all_mal == []
+        assert primary == "UNKNOWN"
+    
+    def test_invalid_format(self):
+        # Ska inte krascha
+        all_mal, primary = parse_malnummer_lista(["garbage"])
+        assert isinstance(all_mal, list)
+```
+
+### 6. Skapa MALNUMMER_FORMAT.md
+
+Dokumentera:
+- Format per domstol
+- Exempel
+- Normaliseringsregler
+- Testresultat
+
+## OUTPUT
+
+Leverera 4 filer:
+1. naming.py (uppdaterad MalnummerParser)
+2. test_malnummer.py (30+ tester)
+3. MALNUMMER_FORMAT.md (dokumentation)
+4. README_FAS1B.md (ändringslogg)
+
+Börja med att läsa alla input-filer noggrant!

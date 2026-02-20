@@ -21,10 +21,10 @@ class TestMalnummerParser:
         assert MalnummerParser.parse_single("4033-09") == "4033-09"
 
     def test_parse_single_with_prefix(self):
-        """Målnummer med prefix - implementationen extraherar bara numret."""
+        """Målnummer med prefix - implementationen behåller prefix."""
         result = MalnummerParser.parse_single("M 4256-10")
-        # Implementationen extraherar 4256-10 utan prefix
-        assert result == "4256-10"
+        # Implementationen behåller M-prefix
+        assert result == "M 4256-10"
 
     def test_normalize_interval_chars(self):
         """Normalisera intervalltecken."""
