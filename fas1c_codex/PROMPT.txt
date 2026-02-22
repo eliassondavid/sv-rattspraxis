@@ -1,0 +1,36 @@
+# FAS 1C — ICKE-REFERERADE AVGÖRANDEN
+
+Utöka harvestern för att hantera DOM_ELLER_BESLUT, PROVNINGSTILLSTAND och NOTIS.
+
+## INPUT-FILER
+1. FAS_1C_INSTRUKTIONER.md
+2. naming.py (befintlig)
+3. harvester.py (befintlig)
+4. api_catalog.json (Fas 0-resultat)
+
+## UPPGIFTER
+
+### 1. Uppdatera naming.py
+Lägg till funktioner för nya filnamnsformat:
+- `generate_filename_dom()`
+- `generate_filename_pt()`
+- `generate_filename_notis()`
+
+### 2. Uppdatera harvester.py
+- Hantera publikationer utan `referatNummerLista`
+- Generera fallback-referatnummer per typ
+- Sekvensräknare per typ och år
+
+### 3. Skapa pdf_extractor.py
+- Funktion: `extract_pdf_text(bilaga_id: str) -> str`
+- Använd pdfplumber
+- Rate limiting (samma som API)
+
+### 4. Uppdatera CLI
+- Tillåt harvesting av alla typer
+- `sv-rp harvest --court HDO --type DOM_ELLER_BESLUT`
+
+### 5. Tester
+- test_fas1c.py med tester för nya typer
+
+Börja med att läsa FAS_1C_INSTRUKTIONER.md!

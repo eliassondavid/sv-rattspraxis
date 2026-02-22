@@ -1,0 +1,667 @@
+{
+  "metadata": {
+    "created_at": "2026-02-20T17:00:08.995380+00:00",
+    "api_base_url": "https://rattspraxis.etjanst.domstol.se/api/v1",
+    "total_domstolar": 23,
+    "fas": 0
+  },
+  "domstolar": [
+    {
+      "domstol_kod": "PBR",
+      "domstol_benamning": "Patentbesvärsrätten",
+      "volymer": {
+        "REFERAT": 0,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 87,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 0,
+        "referat_nummer_format": "Saknas",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [],
+        "malnummer": [
+          "10-292",
+          "13-54"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "MOD",
+      "domstol_benamning": "Miljööverdomstolen",
+      "volymer": {
+        "REFERAT": 709,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "Existerar",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [
+          "MÖD 2011:15",
+          "MÖD 2011:12"
+        ],
+        "malnummer": [
+          "M 4256-10",
+          "M 7762-10"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "HYOD",
+      "domstol_benamning": "Svea hovrätts hyresrättsliga avgöranden",
+      "volymer": {
+        "REFERAT": 238,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 8,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 80,
+        "referat_nummer_format": "Existerar",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": true,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [
+          "RH 2025:26"
+        ],
+        "malnummer": [
+          "H 15144-24",
+          "Ö 11611-25"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "HVS",
+      "domstol_benamning": "Hovrätten för Västra Sverige",
+      "volymer": {
+        "REFERAT": 630,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "Existerar",
+        "malnummer_format": "Existerar",
+        "har_litteratur": true,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [
+          "RH 2025:12",
+          "RH 2025:2"
+        ],
+        "malnummer": [
+          "Ä 7634-24",
+          "B 1671-25"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "HON",
+      "domstol_benamning": "Hovrätten för Övre Norrland",
+      "volymer": {
+        "REFERAT": 168,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "Existerar",
+        "malnummer_format": "Existerar",
+        "har_litteratur": true,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [
+          "RH 2023:4",
+          "RH 2025:3"
+        ],
+        "malnummer": [
+          "B 672-22",
+          "B 1120-24"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "HFD",
+      "domstol_benamning": "Högsta förvaltningsdomstolen",
+      "volymer": {
+        "REFERAT": 1117,
+        "NOTIS": 47,
+        "DOM_ELLER_BESLUT": 136,
+        "PROVNINGSTILLSTAND": 42,
+        "FORHANDSAVGORANDE": 2
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 80,
+        "referat_nummer_format": "Saknas",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": true,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [],
+        "malnummer": [
+          "4460-25",
+          "3020-24"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "HNN",
+      "domstol_benamning": "Hovrätten för Nedre Norrland",
+      "volymer": {
+        "REFERAT": 200,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "Existerar",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [
+          "RH 2021:9",
+          "RH 2021:6"
+        ],
+        "malnummer": [
+          "ÖÄ 717-20",
+          "ÖÄ 918-20"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "HSV",
+      "domstol_benamning": "Svea hovrätt",
+      "volymer": {
+        "REFERAT": 1374,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "Existerar",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [
+          "RH 2025:5",
+          "RH 2025:20"
+        ],
+        "malnummer": [
+          "K 13251-25",
+          "Ö 10637-25"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "KGG",
+      "domstol_benamning": "Kammarrätten i Göteborg",
+      "volymer": {
+        "REFERAT": 8,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 0,
+        "referat_nummer_format": "Saknas",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [],
+        "malnummer": [
+          "787-01",
+          "3745-01"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "DOV",
+      "domstol_benamning": "Domstolsverket",
+      "volymer": {
+        "REFERAT": 0,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 0,
+        "referat_nummer_format": "Saknas",
+        "malnummer_format": "Saknas",
+        "har_litteratur": false,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [],
+        "malnummer": []
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "ADO",
+      "domstol_benamning": "Arbetsdomstolen",
+      "volymer": {
+        "REFERAT": 1979,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "Existerar",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [
+          "AD 2024 nr 102",
+          "AD 2024 nr 105"
+        ],
+        "malnummer": [
+          "A 153/24",
+          "A 161/23"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "KSU",
+      "domstol_benamning": "Kammarrätten i Sundsvall",
+      "volymer": {
+        "REFERAT": 3,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 0,
+        "referat_nummer_format": "Saknas",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [],
+        "malnummer": [
+          "3546-00",
+          "2449-00"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "KST",
+      "domstol_benamning": "Kammarrätten i Stockholm",
+      "volymer": {
+        "REFERAT": 75,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "Existerar",
+        "malnummer_format": "Existerar",
+        "har_litteratur": true,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [
+          "RK 2022:2",
+          "RK 2022:1"
+        ],
+        "malnummer": [
+          "7433-21",
+          "5223-21"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "MMOD",
+      "domstol_benamning": "Mark- och miljööverdomstolen",
+      "volymer": {
+        "REFERAT": 685,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 383,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 1
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 0,
+        "referat_nummer_format": "Saknas",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": true,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [],
+        "malnummer": [
+          "M 11808-23",
+          "M 11431-25"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "HGO",
+      "domstol_benamning": "Göta hovrätt",
+      "volymer": {
+        "REFERAT": 439,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "Existerar",
+        "malnummer_format": "Existerar",
+        "har_litteratur": true,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [
+          "RH 2025:27",
+          "RH 2025:18"
+        ],
+        "malnummer": [
+          "B 2455-25",
+          "Ö 1380-25"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "KJO",
+      "domstol_benamning": "Kammarrätten i Jönköping",
+      "volymer": {
+        "REFERAT": 23,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 0,
+        "referat_nummer_format": "Saknas",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [],
+        "malnummer": [
+          "2622-05",
+          "1843-05"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "HDO",
+      "domstol_benamning": "Högsta domstolen",
+      "volymer": {
+        "REFERAT": 5196,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 256,
+        "PROVNINGSTILLSTAND": 67,
+        "FORHANDSAVGORANDE": 2
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 0,
+        "referat_nummer_format": "Saknas",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": true,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [],
+        "malnummer": [
+          "Ö 6478-25",
+          "Ö 3589-25"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "MIOD",
+      "domstol_benamning": "Migrationsöverdomstolen",
+      "volymer": {
+        "REFERAT": 526,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "Existerar",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [
+          "MIG 2025:13",
+          "MIG 2025:14"
+        ],
+        "malnummer": [
+          "UM 12369-24",
+          "UM 3254-25"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "HSB",
+      "domstol_benamning": "Hovrätten över Skåne och Blekinge",
+      "volymer": {
+        "REFERAT": 508,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "Existerar",
+        "malnummer_format": "Existerar",
+        "har_litteratur": true,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [
+          "RH 2025:25",
+          "RH 2025:13"
+        ],
+        "malnummer": [
+          "B 5581-24",
+          "B 5543-24"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "PMOD",
+      "domstol_benamning": "Patent- och marknadsöverdomstolen",
+      "volymer": {
+        "REFERAT": 198,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 29,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "Saknas",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": true,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [],
+        "malnummer": [
+          "PMT 10755-25",
+          "PMÄ 16563-24"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "REGR",
+      "domstol_benamning": "Regeringsrätten",
+      "volymer": {
+        "REFERAT": 1727,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "Existerar",
+        "malnummer_format": "Existerar",
+        "har_litteratur": true,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [
+          "RÅ 2010 ref. 123",
+          "RÅ 2010 ref. 116"
+        ],
+        "malnummer": [
+          "5486-09",
+          "1662-09"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "MDO",
+      "domstol_benamning": "Marknadsdomstolen",
+      "volymer": {
+        "REFERAT": 478,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 0,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 100,
+        "referat_nummer_format": "Existerar",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [
+          "MD 2016:12",
+          "MD 2016:10"
+        ],
+        "malnummer": [
+          "2016-9",
+          "2016-12"
+        ]
+      },
+      "avvikelser": []
+    },
+    {
+      "domstol_kod": "RHN",
+      "domstol_benamning": "Rättshjälpsnämnden",
+      "volymer": {
+        "REFERAT": 0,
+        "NOTIS": 0,
+        "DOM_ELLER_BESLUT": 12,
+        "PROVNINGSTILLSTAND": 0,
+        "FORHANDSAVGORANDE": 0
+      },
+      "faltstruktur": {
+        "innehall_tackning_procent": 0,
+        "referat_nummer_format": "Saknas",
+        "malnummer_format": "Existerar",
+        "har_litteratur": false,
+        "har_bilagor": false,
+        "har_eu_echr": false
+      },
+      "exempel": {
+        "referat_nummer": [],
+        "malnummer": [
+          "33-09",
+          "1-12"
+        ]
+      },
+      "avvikelser": []
+    }
+  ],
+  "edge_cases": []
+}

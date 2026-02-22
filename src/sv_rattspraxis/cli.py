@@ -8,7 +8,7 @@ from pathlib import Path
 import click
 
 from .courts import COURTS
-from .harvester import DomstolHarvester
+from .harvester import DomstolHarvester, SUPPORTED_HARVEST_TYPES
 
 
 @click.group(help="sv-rattspraxis: harvester och bearbetning")
@@ -24,7 +24,14 @@ def init() -> None:
 
 @main.command()
 @click.option("--court", default="HFD", show_default=True, help="Domstolskod eller ALL")
-@click.option("--type", "--typ", "harvest_type", default="REFERAT", show_default=True)
+@click.option(
+    "--type",
+    "--typ",
+    "harvest_type",
+    default="REFERAT",
+    show_default=True,
+    type=click.Choice(SUPPORTED_HARVEST_TYPES, case_sensitive=False),
+)
 @click.option("--from-year", default=2011, show_default=True, type=int)
 @click.option("--to-year", default=None, type=int)
 @click.option("--rate-limit", default=1.5, show_default=True, type=float)
@@ -57,14 +64,14 @@ def harvest(
 
     async def run() -> int:
         try:
-            from .api_client import APIClient
+            from .api_client import RattspraxisAPIClient
         except ImportError as exc:  # pragma: no cover - depends on runtime environment
             raise click.ClickException(
                 "APIClient saknas i installationen. Säkerställ att api_client.py är implementerad."
             ) from exc
 
         total_entries = 0
-        async with APIClient(rate_limit=rate_limit) as client:
+        async with RattspraxisAPIClient(rate_limit=rate_limit) as client:
             for court_code in courts_to_harvest:
                 click.echo(
                     f"Harvest start: court={court_code}, type={selected_type}, "

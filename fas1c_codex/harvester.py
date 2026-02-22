@@ -13,19 +13,11 @@ from typing import Any
 import structlog
 
 from .courts import COURTS, CourtConfig
-from .naming import MalnummerParser, generate_filename_for_type, parse_referat_nummer
-from .pdf_extractor import extract_pdf_text
+from .naming import MalnummerParser, generate_filename, parse_referat_nummer
 
 logger = structlog.get_logger()
 
 HARVESTER_VERSION = "1.1.0"
-SUPPORTED_HARVEST_TYPES = (
-    "REFERAT",
-    "DOM_ELLER_BESLUT",
-    "PROVNINGSTILLSTAND",
-    "NOTIS",
-    "FORHANDSAVGORANDE",
-)
 
 
 @dataclass(slots=True)
@@ -83,12 +75,9 @@ class DomstolHarvester:
 
         if self.domstol not in COURTS:
             raise ValueError(f"Okänd domstol: {domstol_kod}")
-        if self.typ not in SUPPORTED_HARVEST_TYPES:
-            supported = ", ".join(SUPPORTED_HARVEST_TYPES)
-            raise ValueError(f"Okänd avgörandetyp: {self.typ}. Stödda typer: {supported}")
 
         self.config: CourtConfig = COURTS[self.domstol]
-        self._fallback_ref_counter: dict[tuple[str, int], int] = {}
+        self._fallback_ref_counter: dict[int, int] = {}
 
         self.raw_dir = self.data_root / "raw"
         self.processed_dir = self.data_root / "processed"
@@ -169,97 +158,17 @@ class DomstolHarvester:
             return []
         return list(publications)
 
-    @staticmethod
-    def _normalize_typ(typ: str) -> str:
-        return (typ or "REFERAT").upper().strip()
-
-    def _fallback_referat(self, avgorandedatum: str, publication_typ: str) -> tuple[str, int, int]:
+    def _fallback_referat(self, avgorandedatum: str) -> tuple[str, int, int]:
         """Skapar deterministiskt fallback-referat för poster utan referatnummer."""
         try:
             year = int(avgorandedatum[:4])
         except (TypeError, ValueError):
             year = self.from_year
 
-        typ_norm = self._normalize_typ(publication_typ)
-        counter_key = (typ_norm, year)
-        ref_no = self._fallback_ref_counter.get(counter_key, 0) + 1
-        self._fallback_ref_counter[counter_key] = ref_no
-
-        label = {
-            "DOM_ELLER_BESLUT": "dom",
-            "PROVNINGSTILLSTAND": "pt",
-            "NOTIS": "not.",
-            "REFERAT": "ref.",
-            "FORHANDSAVGORANDE": "fh",
-        }.get(typ_norm, "ref.")
-        referat_nummer = f"{self.domstol} {year} {label} {ref_no}"
+        ref_no = self._fallback_ref_counter.get(year, 0) + 1
+        self._fallback_ref_counter[year] = ref_no
+        referat_nummer = f"{self.domstol} {year} ref. {ref_no}"
         return referat_nummer, year, ref_no
-
-    def _extract_bilaga_id(self, publication: Any) -> str | None:
-        bilaga_lista = self._get_attr(publication, "bilagaLista", []) or []
-        if not bilaga_lista:
-            return None
-
-        first_bilaga = bilaga_lista[0]
-        for key in ("fillagringId", "filLagringId", "id", "bilagaId"):
-            value = self._get_attr(first_bilaga, key)
-            if value:
-                return str(value)
-        return None
-
-    async def _ensure_innehall(
-        self,
-        publication: Any,
-        publication_typ: str,
-    ) -> Any:
-        """Berikar innehåll från PDF för HDO DOM_ELLER_BESLUT när HTML-innehåll saknas."""
-        typ_norm = self._normalize_typ(publication_typ)
-        if self.domstol != "HDO" or typ_norm != "DOM_ELLER_BESLUT":
-            return publication
-
-        befintligt_innehall = self._get_attr(publication, "innehall")
-        if isinstance(befintligt_innehall, str) and befintligt_innehall.strip():
-            return publication
-
-        bilaga_id = self._extract_bilaga_id(publication)
-        if not bilaga_id:
-            return publication
-
-        try:
-            extracted_text = await extract_pdf_text(api_client=self.api_client, bilaga_id=bilaga_id)
-        except Exception as exc:  # pragma: no cover - defensiv loggning
-            logger.warning(
-                "pdf_extract_failed",
-                domstol=self.domstol,
-                typ=typ_norm,
-                bilaga_id=bilaga_id,
-                error=str(exc),
-            )
-            return publication
-
-        if not extracted_text.strip():
-            return publication
-
-        if isinstance(publication, dict):
-            enriched = dict(publication)
-            enriched["innehall"] = extracted_text
-            return enriched
-
-        if hasattr(publication, "model_dump"):
-            enriched = publication.model_dump(exclude_none=False)
-            enriched["innehall"] = extracted_text
-            return enriched
-
-        try:
-            setattr(publication, "innehall", extracted_text)
-        except Exception:  # pragma: no cover - defensiv fallback
-            logger.warning(
-                "publication_innehall_setattr_failed",
-                domstol=self.domstol,
-                typ=typ_norm,
-                bilaga_id=bilaga_id,
-            )
-        return publication
 
     async def harvest_all(self) -> list[MasterListEntry]:
         """Hämtar alla avgöranden för vald domstol/tidsspann/typ."""
@@ -327,19 +236,16 @@ class DomstolHarvester:
 
         entries: list[MasterListEntry] = []
         for publication in all_publications:
-            entry = await self.process_publication(publication)
+            entry = self.process_publication(publication)
             if entry is not None:
                 entries.append(entry)
 
         self.save_masterlist(entries)
         return entries
 
-    async def process_publication(self, publication: Any) -> MasterListEntry | None:
+    def process_publication(self, publication: Any) -> MasterListEntry | None:
         """Bearbetar en publikation till råfil + masterlist-entry."""
         try:
-            publication_typ = self._normalize_typ(str(self._get_attr(publication, "typ", self.typ)))
-            publication = await self._ensure_innehall(publication, publication_typ)
-
             referat_lista = self._get_attr(publication, "referatNummerLista", []) or []
             malnummer_lista = self._get_attr(publication, "malNummerLista", []) or []
             avgorandedatum = str(self._get_attr(publication, "avgorandedatum", ""))
@@ -355,14 +261,11 @@ class DomstolHarvester:
                     logger.warning(
                         "referat_parse_failed_fallback",
                         domstol=self.domstol,
-                        typ=publication_typ,
                         referat_nummer=referat_nummer,
                     )
-                    referat_nummer, year, ref_no = self._fallback_referat(
-                        avgorandedatum, publication_typ
-                    )
+                    referat_nummer, year, ref_no = self._fallback_referat(avgorandedatum)
             else:
-                referat_nummer, year, ref_no = self._fallback_referat(avgorandedatum, publication_typ)
+                referat_nummer, year, ref_no = self._fallback_referat(avgorandedatum)
 
             all_malnummer, malnummer_primart = MalnummerParser.parse_malnummer_lista(
                 list(malnummer_lista)
@@ -370,9 +273,8 @@ class DomstolHarvester:
             if not all_malnummer and malnummer_lista:
                 malnummer_primart = str(malnummer_lista[0])
 
-            filename = generate_filename_for_type(
+            filename = generate_filename(
                 domstol=self.domstol,
-                typ=publication_typ,
                 year=year,
                 ref_no=ref_no,
                 malnummer_primart=malnummer_primart,
@@ -387,7 +289,7 @@ class DomstolHarvester:
             entry = MasterListEntry(
                 api_id=str(self._get_attr(publication, "id", "UNKNOWN")),
                 domstol=domstol_kod or self.domstol,
-                typ=publication_typ,
+                typ=str(self._get_attr(publication, "typ", self.typ)),
                 referat_nummer=referat_nummer,
                 year=year,
                 ref_no=ref_no,
@@ -402,7 +304,6 @@ class DomstolHarvester:
             logger.info(
                 "publication_processed",
                 domstol=self.domstol,
-                typ=publication_typ,
                 referat_nummer=referat_nummer,
                 filename=filename,
                 malnummer_antal=len(all_malnummer),
